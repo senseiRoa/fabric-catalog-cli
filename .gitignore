@@ -57,3 +57,7 @@ desktop.ini
 htmlcov/
 .mypy_cache/
 .ruff_cache/
+
+# Output / generated files
+output/
+*.xlsx
