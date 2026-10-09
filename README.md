@@ -1,4 +1,4 @@
-# fabric_UT - Catalogo de Microsoft Fabric
+# fabric-catalog-cli - Catalogo de Microsoft Fabric
 
 Inventario de workspaces, items (pipelines, dataflows, notebooks, warehouses,
 lakehouses, reportes, etc.), **programaciones de pipelines** y **historial de
@@ -61,7 +61,7 @@ uv run build_excel.py
 Instalar dependencias (una sola vez):
 
 ```bash
-cd ~/downloads/fabric_UT
+cd fabric-catalog-cli
 uv sync
 ```
 
