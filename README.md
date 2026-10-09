@@ -54,11 +54,47 @@ uv run build_excel.py
 
 ## Requisitos
 
-- [uv](https://docs.astral.sh/uv/) instalado
+- Python 3.13 o superior
+- [uv](https://docs.astral.sh/uv/) instalado (ver seccion siguiente)
 - Permisos de lectura en los workspaces (Viewer o superior; para
   `--export-definitions` hace falta Contributor o superior)
 
-Instalar dependencias (una sola vez):
+### Instalar uv
+
+Si `uv` no esta instalado, seguir la guia oficial:
+https://docs.astral.sh/uv/getting-started/installation/
+
+**Windows (PowerShell):**
+
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+**macOS / Linux:**
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**Con pip (si ya se tiene Python):**
+
+```bash
+pip install uv
+```
+
+**Con Homebrew (macOS):**
+
+```bash
+brew install uv
+```
+
+Verificar la instalacion:
+
+```bash
+uv --version
+```
+
+### Instalar dependencias del proyecto
 
 ```bash
 cd fabric-catalog-cli
@@ -89,8 +125,8 @@ uv run fabric_catalog.py -w prod --export-definitions
 
 Opciones utiles:
 
-| Opcion | Para que |
-| ------ | -------- |
+| Opcion | Descripcion |
+| ------ | ----------- |
 | `--include-schedules` | Consulta las programaciones de cada pipeline |
 | `--include-runs` | Consulta el historial de ejecuciones (implica `--include-schedules`) |
 | `--runs-limit N` | Maximo de ejecuciones por pipeline (default: 20) |
@@ -103,8 +139,9 @@ Opciones utiles:
 | `--tenant <id>` | Fuerza un tenant especifico |
 | `-o <carpeta>` | Carpeta de salida (default `output`) |
 
-**Login:** lo haces VOS en el navegador (cuenta Microsoft/Entra). El script nunca
-recibe tu contrasena, solo un token. `.auth_record.json` guarda solo metadata de la cuenta.
+**Autenticacion:** el login se realiza en el navegador (cuenta Microsoft/Entra)
+o via device code. El script nunca recibe la contrasena, solo un token.
+El archivo `.auth_record.json` guarda unicamente metadata de la cuenta.
 
 **Salida:** `output/<timestamp>/`
 
@@ -135,12 +172,12 @@ recibe tu contrasena, solo un token. `.auth_record.json` guarda solo metadata de
 | Campo | Descripcion |
 | ----- | ----------- |
 | `workspaceName` / `workspaceId` | Workspace del pipeline |
-| `pipelineName` / `pipelineId` | Pipeline dueño de la programacion |
+| `pipelineName` / `pipelineId` | Pipeline al que pertenece la programacion |
 | `scheduleId` | ID de la programacion |
 | `scheduleEnabled` | `true` / `false` segun la API |
 | `scheduleStatus` | `habilitada`, `deshabilitada`, `vencida` o `desconocida` |
 | `scheduleType` | `Daily`, `Weekly`, `Monthly` o `Cron` |
-| `scheduleDescription` | Descripcion legible en español |
+| `scheduleDescription` | Descripcion legible en espanol |
 | `startDateTime` / `endDateTime` | Vigencia de la programacion (UTC) |
 | `localTimeZoneId` | Zona horaria original (ID de Windows) |
 | `convertedTime` | Hora convertida a la zona de referencia |
@@ -154,12 +191,12 @@ recibe tu contrasena, solo un token. `.auth_record.json` guarda solo metadata de
 
 ### Ejemplos de `scheduleDescription`
 
-- `Todos los días a las 19:00 (SA Pacific Standard Time)`
+- `Todos los dias a las 19:00 (SA Pacific Standard Time)`
 - `De lunes a viernes a las 02:00 (SA Pacific Standard Time)`
-- `Lunes y miércoles a las 06:30 (SA Pacific Standard Time)`
-- `El día 15 de cada mes a las 04:00 (SA Pacific Standard Time)`
+- `Lunes y miercoles a las 06:30 (SA Pacific Standard Time)`
+- `El dia 15 de cada mes a las 04:00 (SA Pacific Standard Time)`
 - `Intervalo de 10 minutos (SA Pacific Standard Time)`
-- `Configuración no interpretada` (si el tipo no se reconoce)
+- `Configuracion no interpretada` (si el tipo no se reconoce)
 
 ### Campos de `pipeline_runs.csv`
 
@@ -248,7 +285,7 @@ uv run pytest tests/ -v
 39 tests unitarios con respuestas JSON simuladas (sin acceso real a Fabric).
 Cubren: programaciones diaria/semanal/mensual/cron, pipelines sin programaciones,
 configuraciones desconocidas, paginacion, errores HTTP 403/404/429/5xx,
-conversion de zona horaria y exportacion CSV/JSON con caracteres españoles.
+conversion de zona horaria y exportacion CSV/JSON con caracteres espanoles.
 
 ## Permisos
 
@@ -272,10 +309,10 @@ No almacena contrasenas ni tokens de acceso en archivos de salida.
 - Metadata/lineage de TODO el tenant requiere rol Fabric Admin (Scanner API), no incluido.
 - La paridad entre ambientes compara por nombre exacto del item.
 - Si el tenant bloquea apps de terceros, el client id publico de Azure CLI puede estar
-  bloqueado; pedi a IT una app registration y cambia `CLIENT_ID` en `fabric_catalog.py`.
+  bloqueado; solicitar a IT una app registration y cambiar `CLIENT_ID` en `fabric_catalog.py`.
 - El tipo `Cron` en Fabric usa un intervalo en **minutos**, no una expresion cron convencional.
 - Si una programacion tiene un tipo de configuracion no reconocido, se muestra
-  `Configuración no interpretada` y se conserva el JSON original.
+  `Configuracion no interpretada` y se conserva el JSON original.
 - La conversion de zona horaria usa identificadores IANA; el campo original
   `localTimeZoneId` usa identificadores de Windows (ej: `SA Pacific Standard Time`).
 - No se verifica contra un entorno real de Fabric en las pruebas; los tests usan
